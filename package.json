@@ -1,0 +1,20 @@
+{
+  "name": "gamf_webprog_2_gyak",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markbozsoki/GAMF_webprog_2_gyak.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/markbozsoki/GAMF_webprog_2_gyak/issues"
+  },
+  "homepage": "https://github.com/markbozsoki/GAMF_webprog_2_gyak#readme"
+}
