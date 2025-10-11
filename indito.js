@@ -12,7 +12,7 @@ app.use( // session middleware
     session(
         {
             name: 'SessionCookie',
-            genid: function(request) {
+            genid: function (request) {
                 let session_id = genuuid();
                 console.log(`session id created: ${session_id}`);
                 return session_id;
@@ -28,44 +28,48 @@ app.use( // session middleware
     )
 );
 
-http.createServer(function (request, response) {
-    var url = request.url;
-    console.log(`request url path: ${url}`)
+app.get('', (request, response) => loadMainPage(request, response))
+app.get('/', (request, response) => loadMainPage(request, response));
+function loadMainPage(request, response) {
+    fs.readFile('./pages/index.html', function (erroror, html) {
+        if (erroror) {
+            throw erroror;
+        }
+        response.write(html);
+        response.end();
+    });
+}
 
-    if (url === '/' || url === '' || url === '/index.html') {
-        fs.readFile('./pages/index.html', function (err, html) {
-            if (err) {
-                throw err;
-            }
-            response.write(html);
-            response.end();
-        });
-    } else if (url === '/admin') {
-        fs.readFile('./pages/admin.html', function (err, html) {
-            if (err) {
-                throw err;
-            }
-            response.write(html);
-            response.end();
-        });
-    } else if (url === '/login') {
-        fs.readFile('./pages/login.html', function (err, html) {
-            if (err) {
-                throw err;
-            }
-            response.write(html);
-            response.end();
-        });
-    } else if (url.startsWith('/assets')) {
-        var asset_path = url.split('?')[0]
-        fs.readFile(`.${asset_path}`, function (err, asset) {
-            if (err) {
-                throw err;
-            }
-            response.write(asset);
-            response.end();
-        });
-    }
+app.get('/login', (request, response) => {
+    fs.readFile('./pages/login.html', function (error, html) {
+        if (error) {
+            throw error;
+        }
+        response.write(html);
+        response.end();
+    });
+})
+
+app.get('/admin', (request, response) => {
+    fs.readFile('./pages/admin.html', function (error, html) {
+        if (error) {
+            throw error;
+        }
+        response.write(html);
+        response.end();
+    });
+})
+
+// loading css, js, bitmaps and other resources for the page
+app.get(/.assets*/, (request, response) => {
+    var asset_path = url.split('?')[0]
+    fs.readFile(`.${asset_path}`, function (error, resource) {
+        if (error) {
+            throw error;
+        }
+        response.write(resource);
+        response.end();
+    });
 })
 
 app.listen(server_port, function () {
