@@ -1,5 +1,10 @@
-var http = require('http'),
-    fs = require('fs');
+var http = require('http');
+var fs = require('fs');
+var exp = require('express');
+const app = exp();
+
+var genuuid = require('uudi/v4');
+const session = require('express-session');
 
 var server_port = 8080
 http.createServer(function (request, response) {
@@ -40,6 +45,8 @@ http.createServer(function (request, response) {
             response.end();
         });
     }
-}).listen(server_port, function () {
+})
+
+app.listen(server_port, function () {
     console.log(`server start at port ${server_port}`)
 });
