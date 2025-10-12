@@ -70,6 +70,17 @@ app.get(/.assets*/, (request, response) => {
     });
 })
 
+app.get(/.*/, (request, response) => {
+    console.log(`Unrecognized path: ${request.path}`)
+    fs.readFile('./pages/404.html', function (error, html) {
+        if (error) {
+            throw error;
+        }
+        response.write(html);
+        response.end();
+    });
+})
+
 app.listen(PORT, function () {
     console.log(`server start at port ${PORT}`)
 });
