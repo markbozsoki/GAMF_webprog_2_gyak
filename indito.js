@@ -4,7 +4,7 @@ import exp from 'express';
 import session from 'express-session';
 
 const app = exp();
-var PORT = 8080
+var PORT = 8080;
 
 app.use( // session middleware
     session(
@@ -26,7 +26,7 @@ app.use( // session middleware
     )
 );
 
-app.get('', (request, response) => loadMainPage(request, response))
+app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
     fs.readFile('./pages/index.html', function (erroror, html) {
@@ -60,7 +60,7 @@ app.get('/admin', (request, response) => {
 
 // loading css, js, bitmaps and other resources for the page
 app.get(/.assets*/, (request, response) => {
-    console.log(`Loading resource: ${request.path}`)
+    console.log(`Loading resource: ${request.path}`);
     fs.readFile(`.${request.path}`, function (error, resource) {
         if (error) {
             throw error;
@@ -71,7 +71,7 @@ app.get(/.assets*/, (request, response) => {
 })
 
 app.get(/.*/, (request, response) => {
-    console.log(`Unrecognized path: ${request.path}`)
+    console.log(`Unrecognized path: ${request.path}`);
     fs.readFile('./pages/404.html', function (error, html) {
         if (error) {
             throw error;
@@ -82,5 +82,5 @@ app.get(/.*/, (request, response) => {
 })
 
 app.listen(PORT, function () {
-    console.log(`server start at port ${PORT}`)
+    console.log(`server start at port ${PORT}`);
 });
