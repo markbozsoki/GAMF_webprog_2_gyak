@@ -17,7 +17,7 @@ app.use( // session middleware
             },
             secret: 'this_is_the_secret',
             resave: false,
-            saveUninitialized: false,
+            saveUninitialized: true,
             cookie: {
                 secure: false,
                 expires: 600_000 // miliseconds (10 min)
@@ -38,17 +38,31 @@ function loadMainPage(request, response) {
     });
 }
 
+const requireAuth = (request, response, next) => {
+    if (request.session.userId) {
+        next();
+    } else {
+        console.log(`Access denied to: ${request.path}, login required`);
+        response.redirect('/login?error=' + encodeURIComponent('ACCESS_DENIED'));
+    }
+}
+
 app.get('/login', (request, response) => {
-    fs.readFile('./pages/login.html', function (error, html) {
-        if (error) {
-            throw error;
-        }
-        response.write(html);
-        response.end();
-    });
+    if (request.session.userId) {
+        console.log(`User is already logged in: ${request.session.userId}`);
+        response.redirect('');
+    } else {
+        fs.readFile('./pages/login.html', function (error, html) {
+            if (error) {
+                throw error;
+            }
+            response.write(html);
+            response.end();
+        });
+    }
 })
 
-app.get('/admin', (request, response) => {
+app.get('/admin', requireAuth, (request, response) => {
     fs.readFile('./pages/admin.html', function (error, html) {
         if (error) {
             throw error;
