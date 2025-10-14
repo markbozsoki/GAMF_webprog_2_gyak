@@ -1167,4 +1167,64 @@ section,
   background: color-mix(in srgb, var(--accent-color), transparent 20%);
 }
 
-/* Add your styles here */
+/*--------------------------------------------------------------
+# Database Section
+--------------------------------------------------------------*/
+#alphabet-filter {
+  margin-bottom: 1rem;
+}
+
+#alphabet-filter button {
+  margin-right: 0.25rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--surface-color);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#alphabet-filter button:hover {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  cursor: pointer;
+}
+
+#alphabet-filter button:disabled {
+  background-color: #f0f0f0;
+  color: #aaa;
+  border-color: #aaa;
+  cursor: not-allowed;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  background-color: var(--surface-color);
+  padding: 0.5rem;
+}
+
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--default-color);
+}
+
+table.table thead th {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  text-align: left;
+  padding: 0.5rem;
+  font-weight: bold;
+}
+
+table.table tbody td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
