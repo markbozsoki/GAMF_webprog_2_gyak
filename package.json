@@ -2,7 +2,7 @@
   "name": "gamf_webprog_2_gyak",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "indito.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,7 +17,7 @@
     "url": "https://github.com/markbozsoki/GAMF_webprog_2_gyak/issues"
   },
   "homepage": "https://github.com/markbozsoki/GAMF_webprog_2_gyak#readme",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
@@ -26,6 +26,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mysql2": "^3.15.1",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "uuid": "^11.1.0"
   }
 }
