@@ -30,9 +30,9 @@ app.use( // session middleware
 app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
-    fs.readFile('./pages/index.html', function (erroror, html) {
-        if (erroror) {
-            throw erroror;
+    fs.readFile('./pages/index.html', function (error, html) {
+        if (error) {
+            throw error;
         }
         response.write(html);
         response.end();
