@@ -3,6 +3,7 @@ import fs from 'fs';
 import exp from 'express';
 import session from 'express-session';
 import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
+import database from './modules/database/database.js';
 
 const app = exp();
 var PORT = 8080;

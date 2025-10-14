@@ -2,10 +2,10 @@ var mysql = require("mysql2");
 
 exports.getRecipes = function (databaseName, callback) {
     var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: databaseName
+        host: "localhost", 
+        user: "root", //studb150 
+        password: "", //undecided
+        database: "recipe_database"
     });
 
     con.connect(function (err) {
