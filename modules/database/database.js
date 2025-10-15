@@ -1,8 +1,8 @@
-var mysql = require("mysql2");
+import mysql from "mysql2";
 
-exports.getRecipes = function (databaseName, callback) {
+export function getRecipes(databaseName, callback) {
     var con = mysql.createConnection({
-        host: "localhost", 
+        host: "localhost",
         user: "root", //studb150 
         password: "", //undecided
         database: "recipe_database"

@@ -3,7 +3,7 @@ import fs from 'fs';
 import exp from 'express';
 import session from 'express-session';
 import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
-import database from './modules/database/database.js';
+import { getRecipes } from './modules/database/database.js';
 
 const app = exp();
 var PORT = 8080;
@@ -74,6 +74,13 @@ app.get('/admin', requireAuth, (request, response) => {
     });
 });
 
+app.get('/database', (request, response) => {
+    getRecipes("recipe_database", (html) => {
+        response.write(html);
+        response.end();
+    });
+});
+
 // loading css, js, bitmaps and other resources for the page
 app.get(/.assets*/, (request, response) => {
     //console.log(`Loading resource: ${request.path}`);
@@ -121,7 +128,7 @@ app.post('/login', (request, response) => {
 
 app.post('/logout', (request, response) => {
     request.logout((error) => {
-        if (error) { 
+        if (error) {
             return next(error);
         }
         request.session.destroy(() => {
