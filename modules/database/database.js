@@ -8,6 +8,14 @@ export function getRecipes(databaseName, callback) {
         database: "recipe_database"
     });
 
+    con.ping(function (err) {
+        if (err) {
+            console.error(`No DB connection`);
+            callback(`<tr><td colspan='2'>Nem sikerült kapcsolódni az adatbázishoz.</td></tr>`);
+            return;
+        }
+    });
+
     con.connect(function (err) {
         if (err) throw err;
         var sql =
