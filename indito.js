@@ -4,6 +4,7 @@ import exp from 'express';
 import session from 'express-session';
 import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
 import { getRecipes } from './modules/database/database.js';
+import { crudIngredients } from "./modules/CRUD/crud.js";
 
 const app = exp();
 var PORT = 8080;
@@ -80,6 +81,11 @@ app.get('/database', (request, response) => {
         response.end();
     });
 });
+
+app.all('/ingredients', (request, response) => {
+    crudIngredients(request, response);
+});
+
 
 // loading css, js, bitmaps and other resources for the page
 app.get(/.assets*/, (request, response) => {
