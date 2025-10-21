@@ -7,6 +7,14 @@ const connection = mysql.createConnection({
     database: "recipe_database"
 });
 
+con.ping(function (err) {
+    if (err) {
+        console.error(`Cannot connect to: ${databaseName}`);
+        callback(`<tr><td colspan='2'>Nem sikerült kapcsolódni az adatbázishoz.</td></tr>`);
+        return;
+    }
+});
+
 export function crudIngredients(req, res) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
 
