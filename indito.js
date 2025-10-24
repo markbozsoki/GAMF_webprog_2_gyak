@@ -41,19 +41,12 @@ function loadMainPage(request, response) {
     });
 }
 
-const requireAuth = (request, response, next) => {
-    if (request.session.userId) {
-        next();
-    } else {
-        console.log(`Access denied to: ${request.path}, login required`);
-        response.redirect('/login?error=' + encodeURIComponent('ACCESS_DENIED'));
-    }
-}
-
 app.get('/login', (request, response) => {
     if (request.session.userId) {
-        console.log(`User is already logged in: ${request.session.userId}`);
-        response.redirect('');
+        console.log(`User is already logged in as: ${request.session.userId}`);
+        var error_msg = `Már be vagy jelentkezve, mint ${request.session.userId}! Jelentkezz ki a felhasználóváltáshoz!`
+        response.send(`<script>alert("${error_msg}"); window.location.href = "/#homepage"; </script>`);
+
     } else {
         fs.readFile('./pages/login.html', function (error, html) {
             if (error) {
@@ -64,6 +57,21 @@ app.get('/login', (request, response) => {
         });
     }
 });
+
+const requireAuth = (request, response, next) => {
+    if (request.session.userId) {
+        next();
+    } else {
+        console.log(`Access denied to: ${request.path}, login required`);
+        fs.readFile('./pages/403.html', function (error, html) {
+            if (error) {
+                throw error;
+            }
+            response.write(html);
+            response.end();
+        });
+    }
+}
 
 app.get('/admin', requireAuth, (request, response) => {
     fs.readFile('./pages/admin.html', function (error, html) {
@@ -114,7 +122,7 @@ app.post('/login', (request, response) => {
     var requested_method = request.query.method
     if (requested_method === "login") {
         login(request, response);
-        response.redirect('/');
+        response.redirect('/#homepage');
     }
     else if (requested_method === "register") {
         register(request, response);
@@ -135,9 +143,9 @@ function register(request, response) {
     console.log('registration initiated');
     var data = request.body;
     if (registerNewUser(data)) {
-        response.send('<script>alert("Registration was successful!"); window.location.href = "/login"; </script>');
+        response.send('<script>alert("Sikeres regisztráció!"); window.location.href = "/login"; </script>');
     } else {
-        response.send('<script>alert("Registration failed!"); window.location.href = "/login"; </script>');
+        response.send('<script>alert("Regisztráció sikertelen!"); window.location.href = "/login"; </script>');
     }
 }
 
@@ -147,7 +155,7 @@ function login(request, response) {
     if (validateUserForLogin(data)) {
         request.session.userId = "mockUserId";
     } else {
-        response.send('<script>alert("Invalid username or password!"); window.location.href = "/login"; </script>');
+        response.send('<script>alert("Helytelen felhasználónév vagy jelszó!"); window.location.href = "/login"; </script>');
     }
 }
 
