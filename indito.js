@@ -7,7 +7,7 @@ import { getRecipes } from './modules/database/database.js';
 import { crudIngredients } from "./modules/CRUD/crud.js";
 
 const app = exp();
-var PORT = 8080;
+var PORT = process.env.APP_PORT || 8080;
 
 app.use( // session middleware
     session(
