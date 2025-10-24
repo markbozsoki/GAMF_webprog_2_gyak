@@ -8,4 +8,4 @@ test:
 	npm run test
 
 server:
-	node indito.js
+	node --env-file=.env indito.js
