@@ -29,6 +29,16 @@ app.use( // session middleware
     )
 );
 
+const HOME_PAGE = "/#homepage"
+const LOGIN_PAGE = "/login"
+const LOGOUT_PAGE = "/logout"
+const ADMIN_PAGE = "/admin"
+const DATABASE_PAGE = "/database"
+const INGREDIENTS_PAGE = "/ingredients"
+
+const ADMIN_ROLE = "admin"
+const USER_ROLE = "user"
+
 app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
@@ -41,11 +51,11 @@ function loadMainPage(request, response) {
     });
 }
 
-app.get('/login', (request, response) => {
+app.get(LOGIN_PAGE, (request, response) => {
     if (request.session.userId) {
         console.log(`User is already logged in as: ${request.session.userId}`);
         var error_msg = `Már be vagy jelentkezve, mint ${request.session.userId}! Jelentkezz ki a felhasználóváltáshoz!`
-        response.send(`<script>alert("${error_msg}"); window.location.href = "/#homepage"; </script>`);
+        response.send(`<script>alert("${error_msg}"); window.location.href = "${HOME_PAGE}"; </script>`);
 
     } else {
         fs.readFile('./pages/login.html', function (error, html) {
@@ -58,8 +68,9 @@ app.get('/login', (request, response) => {
     }
 });
 
-const requireAuth = (request, response, next) => {
-    if (request.session.userId) {
+const requireAdminRole = (request, response, next) => {
+    if (request.session.userRole == ADMIN_ROLE) {
+
         next();
     } else {
         console.log(`Access denied to: ${request.path}, login required`);
@@ -73,7 +84,7 @@ const requireAuth = (request, response, next) => {
     }
 }
 
-app.get('/admin', requireAuth, (request, response) => {
+app.get(ADMIN_PAGE, requireAdminRole, (request, response) => {
     fs.readFile('./pages/admin.html', function (error, html) {
         if (error) {
             throw error;
@@ -83,22 +94,31 @@ app.get('/admin', requireAuth, (request, response) => {
     });
 });
 
-app.get('/database', (request, response) => {
+app.get(DATABASE_PAGE, (request, response) => {
     getRecipes("recipe_database", (html) => {
         response.write(html);
         response.end();
     });
 });
 
-app.all('/ingredients', (request, response) => {
+app.all(INGREDIENTS_PAGE, (request, response) => {
     crudIngredients(request, response);
 });
-
 
 // loading css, js, bitmaps and other resources for the page
 app.get(/.assets*/, (request, response) => {
     //console.log(`Loading resource: ${request.path}`);
     fs.readFile(`.${request.path}`, function (error, resource) {
+        if (error) {
+            throw error;
+        }
+        response.write(resource);
+        response.end();
+    });
+});
+
+app.get("/favicon.ico", (request, response) => {
+    fs.readFile(`assets/img/${request.path}`, function (error, resource) {
         if (error) {
             throw error;
         }
@@ -118,15 +138,15 @@ app.get(/.*/, (request, response) => {
     });
 });
 
-app.post('/login', (request, response) => {
+app.post(LOGIN_PAGE, (request, response) => {
     var requested_method = request.query.method
     if (requested_method === "login") {
         login(request, response);
-        response.redirect('/#homepage');
+        response.redirect(HOME_PAGE);
     }
     else if (requested_method === "register") {
         register(request, response);
-        response.redirect('/login');
+        response.redirect(LOGIN_PAGE);
     }
     else {
         fs.readFile('./pages/403.html', function (error, html) {
@@ -140,32 +160,34 @@ app.post('/login', (request, response) => {
 });
 
 function register(request, response) {
-    console.log('registration initiated');
     var data = request.body;
+    console.log(`registration initiated with ${data}`);
     if (registerNewUser(data)) {
-        response.send('<script>alert("Sikeres regisztráció!"); window.location.href = "/login"; </script>');
+        response.send(`<script>alert("Sikeres regisztráció!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     } else {
-        response.send('<script>alert("Regisztráció sikertelen!"); window.location.href = "/login"; </script>');
+        response.send(`<script>alert("Regisztráció sikertelen!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     }
 }
 
 function login(request, response) {
-    console.log('logging in initiated');
     var data = request.body;
+    console.log(`logging in initiated with ${data}`);
     if (validateUserForLogin(data)) {
         request.session.userId = "mockUserId";
+        request.session.userRole = USER_ROLE;
+        //request.session.userRole = ADMIN_ROLE;
     } else {
-        response.send('<script>alert("Helytelen felhasználónév vagy jelszó!"); window.location.href = "/login"; </script>');
+        response.send(`<script>alert("Helytelen felhasználónév vagy jelszó!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     }
 }
 
-app.post('/logout', (request, response) => {
+app.post(LOGOUT_PAGE, (request, response) => {
     request.logout((error) => {
         if (error) {
             return next(error);
         }
         request.session.destroy(() => {
-            response.redirect('');
+            response.redirect(HOME_PAGE);
         })
     })
 });
