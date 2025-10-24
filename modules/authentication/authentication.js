@@ -1,3 +1,5 @@
+import mysql from "mysql2";
+
 export const validateUserForLogin = function validateUserForLogin(request_body) {
     console.log('validateing userdata for login');
     var con = mysql.createConnection({
@@ -13,7 +15,7 @@ export const validateUserForLogin = function validateUserForLogin(request_body) 
             return;
         }
     });
-
+    console.log('validation success')
     return true;
 };
 
@@ -32,7 +34,7 @@ var con = mysql.createConnection({
             return;
         }
     });
-    
 
+    console.log('registration success')
     return true;
 };

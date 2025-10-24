@@ -110,27 +110,46 @@ app.get(/.*/, (request, response) => {
     });
 });
 
-app.post('/register', (request, response) => {
-    var data = request.body;
-    if (registerNewUser(data)) {
+app.post('/login', (request, response) => {
+    var requested_method = request.query.method
+    if (requested_method === "login") {
+        login(request, response);
+        response.redirect('/');
+    }
+    else if (requested_method === "register") {
+        register(request, response);
         response.redirect('/login');
-    } else {
-        response.render('login', {
-            error: 'Username already exists or invalid'
+    }
+    else {
+        fs.readFile('./pages/403.html', function (error, html) {
+            if (error) {
+                throw error;
+            }
+            response.write(html);
+            response.end();
         });
     }
 });
 
-app.post('/login', (request, response) => {
+function register(request, response) {
+    console.log('registration initiated');
+    var data = request.body;
+    if (registerNewUser(data)) {
+        response.send('<script>alert("Registration was successful!"); window.location.href = "/login"; </script>');
+    } else {
+        response.send('<script>alert("Registration failed!"); window.location.href = "/login"; </script>');
+    }
+}
+
+function login(request, response) {
+    console.log('logging in initiated');
     var data = request.body;
     if (validateUserForLogin(data)) {
         request.session.userId = "mockUserId";
     } else {
-        response.render('login', {
-            error: 'Invalid username or password!'
-        });
+        response.send('<script>alert("Invalid username or password!"); window.location.href = "/login"; </script>');
     }
-});
+}
 
 app.post('/logout', (request, response) => {
     request.logout((error) => {
