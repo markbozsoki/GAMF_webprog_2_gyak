@@ -2,32 +2,94 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import exp from 'express';
 import session from 'express-session';
+import mysqlSession from 'express-mysql-session';
+import passport from 'passport';
+import passportLocal from 'passport-local';
+import bodyParser from 'body-parser';
+import crypto from 'crypto';
+
+const LocalStrategy = passportLocal.Strategy;
+const MySQLStore = mysqlSession(session);
+
 import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
 import { getRecipes } from './modules/database/database.js';
 import { crudIngredients } from "./modules/CRUD/crud.js";
 
 const app = exp();
-var PORT = process.env.APP_PORT || 8080;
 
+const SESSION_NAME = "SessionCookie"
 app.use( // session middleware
     session(
         {
-            name: 'SessionCookie',
-            genid: function (request) {
-                let session_id = uuidv4();
-                //console.log(`session id created: ${session_id}`);
-                return session_id;
-            },
+            key: SESSION_NAME,
             secret: 'this_is_the_secret',
+            store: new MySQLStore({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USERNAME,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_DATABASE
+            }),
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: false,
                 expires: 600_000 // miliseconds (10 min)
             }
         }
     )
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(exp.static('public'));
+app.set("views", "pages")
+app.set("view engine", "ejs");
+
+const customFields = {
+    usernameField: 'uname',
+    passwordField: 'pw',
+};
+
+const verifyCallback = (username, password, done) => {
+    var con = mysql.createConnection({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE
+    });
+
+    con.ping(function (err) {
+        if (err) {
+            console.error(`Cannot connect to: ${databaseName} for user authentication`);
+            return false;
+        }
+    });
+    con.query('SELECT * FROM users WHERE username = ? ', [username], function (error, results, fields) {
+        if (error)
+            return done(error);
+        if (results.length == 0)
+            return done(null, false);
+        const isValid = validPassword(password, results[0].hash);
+        user = { id: results[0].id, username: results[0].username, hash: results[0].hash };
+        if (isValid)
+            return done(null, user);
+        else
+            return done(null, false);
+    });
+}
+
+const strategy = new LocalStrategy(customFields, verifyCallback);
+passport.use(strategy);
+
+passport.serializeUser((user, done) => {
+    console.log("inside serialize");
+    done(null, user.id)
+});
+
+var PORT = process.env.APP_PORT || 8080;
 
 const HOME_PAGE = "/#homepage"
 const LOGIN_PAGE = "/login"
@@ -42,13 +104,12 @@ const USER_ROLE = "user"
 app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
-    fs.readFile('./pages/index.html', function (error, html) {
-        if (error) {
-            throw error;
-        }
-        response.write(html);
-        response.end();
-    });
+
+    const template_data = {
+        userRole: request.session.userRole
+    }
+    response.render('index', template_data);
+
 }
 
 app.get(LOGIN_PAGE, (request, response) => {
@@ -58,14 +119,15 @@ app.get(LOGIN_PAGE, (request, response) => {
         response.send(`<script>alert("${error_msg}"); window.location.href = "${HOME_PAGE}"; </script>`);
 
     } else {
-        fs.readFile('./pages/login.html', function (error, html) {
-            if (error) {
-                throw error;
-            }
-            response.write(html);
-            response.end();
-        });
+        response.render("login")
     }
+});
+
+app.get(LOGOUT_PAGE, (request, response) => {
+    request.session.destroy(function (err) {
+        response.clearCookie(SESSION_NAME);
+        response.redirect(HOME_PAGE);
+    });
 });
 
 const requireAdminRole = (request, response, next) => {
@@ -74,24 +136,12 @@ const requireAdminRole = (request, response, next) => {
         next();
     } else {
         console.log(`Access denied to: ${request.path}, login required`);
-        fs.readFile('./pages/403.html', function (error, html) {
-            if (error) {
-                throw error;
-            }
-            response.write(html);
-            response.end();
-        });
+        response.render("403")
     }
 }
 
 app.get(ADMIN_PAGE, requireAdminRole, (request, response) => {
-    fs.readFile('./pages/admin.html', function (error, html) {
-        if (error) {
-            throw error;
-        }
-        response.write(html);
-        response.end();
-    });
+    response.render("admin");
 });
 
 app.get(DATABASE_PAGE, (request, response) => {
@@ -129,13 +179,7 @@ app.get("/favicon.ico", (request, response) => {
 
 app.get(/.*/, (request, response) => {
     console.log(`Unrecognized path: ${request.path}`);
-    fs.readFile('./pages/404.html', function (error, html) {
-        if (error) {
-            throw error;
-        }
-        response.write(html);
-        response.end();
-    });
+    response.render("404");
 });
 
 app.post(LOGIN_PAGE, (request, response) => {
@@ -149,13 +193,7 @@ app.post(LOGIN_PAGE, (request, response) => {
         response.redirect(LOGIN_PAGE);
     }
     else {
-        fs.readFile('./pages/403.html', function (error, html) {
-            if (error) {
-                throw error;
-            }
-            response.write(html);
-            response.end();
-        });
+        response.render("403");
     }
 });
 
@@ -174,23 +212,14 @@ function login(request, response) {
     console.log(`logging in initiated with ${data}`);
     if (validateUserForLogin(data)) {
         request.session.userId = "mockUserId";
-        request.session.userRole = USER_ROLE;
-        //request.session.userRole = ADMIN_ROLE;
+        //request.session.userRole = USER_ROLE;
+        request.session.userRole = ADMIN_ROLE;
     } else {
         response.send(`<script>alert("Helytelen felhasználónév vagy jelszó!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     }
 }
 
-app.post(LOGOUT_PAGE, (request, response) => {
-    request.logout((error) => {
-        if (error) {
-            return next(error);
-        }
-        request.session.destroy(() => {
-            response.redirect(HOME_PAGE);
-        })
-    })
-});
+
 
 app.listen(PORT, function () {
     console.log(`Server started at port: ${PORT} -> http://localhost:${PORT}`);
