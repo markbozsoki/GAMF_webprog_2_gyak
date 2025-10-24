@@ -106,7 +106,8 @@ app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
 
     const template_data = {
-        userRole: request.session.userRole
+        userRole: request.session.userRole,
+        isLogedIn: request.session.userId
     }
     response.render('index', template_data);
 
@@ -117,7 +118,6 @@ app.get(LOGIN_PAGE, (request, response) => {
         console.log(`User is already logged in as: ${request.session.userId}`);
         var error_msg = `Már be vagy jelentkezve, mint ${request.session.userId}! Jelentkezz ki a felhasználóváltáshoz!`
         response.send(`<script>alert("${error_msg}"); window.location.href = "${HOME_PAGE}"; </script>`);
-
     } else {
         response.render("login")
     }
@@ -199,7 +199,7 @@ app.post(LOGIN_PAGE, (request, response) => {
 
 function register(request, response) {
     var data = request.body;
-    console.log(`registration initiated with ${data}`);
+    console.log(`registration initiated with ${JSON.stringify(data)}`);
     if (registerNewUser(data)) {
         response.send(`<script>alert("Sikeres regisztráció!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     } else {
@@ -209,11 +209,11 @@ function register(request, response) {
 
 function login(request, response) {
     var data = request.body;
-    console.log(`logging in initiated with ${data}`);
+    console.log(`logging in initiated with ${JSON.stringify(data)}`);
     if (validateUserForLogin(data)) {
         request.session.userId = "mockUserId";
-        //request.session.userRole = USER_ROLE;
-        request.session.userRole = ADMIN_ROLE;
+        request.session.userRole = USER_ROLE;
+        //request.session.userRole = ADMIN_ROLE;
     } else {
         response.send(`<script>alert("Helytelen felhasználónév vagy jelszó!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     }
