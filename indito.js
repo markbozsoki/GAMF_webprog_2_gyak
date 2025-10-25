@@ -159,12 +159,10 @@ app.all(INGREDIENTS_PAGE, (request, response) => {
 });
 
 app.get(MESSAGES_PAGE, (request, response) => {
-    if (request.session.userId) {
-        messagesIntegration(request, response, (html) => {
-            response.write(html);
-            response.end();
-        });
-    }
+    messagesIntegration(request, response, (html) => {
+        response.write(html);
+        response.end();
+    });
 });
 
 // loading css, js, bitmaps and other resources for the page

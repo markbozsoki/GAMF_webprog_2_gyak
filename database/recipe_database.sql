@@ -20,7 +20,10 @@ CREATE TABLE IF NOT EXISTS `messages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 INSERT INTO `messages` (`timestamp`, `email`, `subject`, `message`) VALUES
-(1761409872, 'test@email.com', 'Hello Test', 'Hello, this is the message! Bye');
+(1761410390, 'test_0@email.com', 'Greetings', 'Hello, this is the message! Bye'),
+(1761404832, 'test_1@email.com', 'What is up? I need some recepies for my grandmothers birthday party', 'Please send me some more recepies!'),
+(1760409872, 'test_2@email.com', 'Hi there', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus in nibh et lacus tempus ultricies. Nullam quam erat, blandit a placerat in, tincidunt non felis. Aliquam erat volutpat. Praesent ullamcorper pretium mi a mollis. Aliquam erat volutpat. Maecenas facilisis varius sagittis. Sed sit amet pulvinar tellus. Nam nisi tellus, vestibulum. Lorem ipsum dolor sitamet, consectetur adipiscing elit. Vivamus in nibh et lacus tempus ultricies. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+(1751409872, 'test_3@email.com', 'Hello Team, I think this website is great!', 'A review is an evaluation of a publication, product, service, or company or a critical take on current affairs in literature, politics or culture. In addition to a critical evaluation, the reviews author may assign the work a rating to indicate its relative merit.');
 
 CREATE TABLE IF NOT EXISTS `etel` (
   `nev` varchar(50) DEFAULT NULL,

@@ -19,7 +19,7 @@ export function messagesIntegration(request, response, callback) {
     console.log("requesting messages table for view")
     con.connect(function (err) {
         if (err) throw err;
-        var sql = `SELECT * FROM messages ORDER BY timestamp ASC;`;
+        var sql = `SELECT * FROM messages ORDER BY timestamp DESC;`;
         con.query(sql, function (err, result, fields) {
             if (err) throw err;
 
