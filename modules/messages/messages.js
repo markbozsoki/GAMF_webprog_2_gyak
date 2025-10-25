@@ -19,18 +19,19 @@ export function messagesIntegration(request, response, callback) {
     console.log("requesting messages table for view")
     con.connect(function (err) {
         if (err) throw err;
-        var sql = `SELECT * FROM messages ORDER BY DESC timestamp;`;
+        var sql = `SELECT * FROM messages ORDER BY timestamp ASC;`;
         con.query(sql, function (err, result, fields) {
             if (err) throw err;
 
             var html = ``;
             result.forEach(row => {
                 console.log(JSON.stringify(row))
+                var datetime_string = `${new Date(row.timestamp * 1000)}`.substring(4,34)
                 html += `<tr>
-                            <td>${row.timestamp}</td>
+                            <td>${datetime_string}</td>
                             <td>${row.email}</td>
-                            <td>${row.subject}</td>
-                            <td>${row.message}</td>
+                            <td style="max-width:250px;">${row.subject}</td>
+                            <td style="max-width:500px;">${row.message}</td>
                         </tr>`.trim();
             });
 

@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 INSERT INTO `messages` (`timestamp`, `email`, `subject`, `message`) VALUES
-(1761401102588, 'test@email.com', 'Hello Test', 'Hello, this is the message! Bye');
+(1761409872, 'test@email.com', 'Hello Test', 'Hello, this is the message! Bye');
 
 CREATE TABLE IF NOT EXISTS `etel` (
   `nev` varchar(50) DEFAULT NULL,
