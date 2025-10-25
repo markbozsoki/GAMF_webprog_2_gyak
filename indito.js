@@ -15,6 +15,7 @@ import { registerNewUser, validateUserForLogin } from './modules/authentication/
 import { getRecipes } from './modules/database/database.js';
 import { crudIngredients } from "./modules/CRUD/crud.js";
 import { handleNewMessage } from "./modules/contact/contact.js";
+import { messagesIntegration } from "./modules/messages/messages.js";
 
 const app = exp();
 
@@ -98,6 +99,7 @@ const LOGOUT_PAGE = "/logout"
 const ADMIN_PAGE = "/admin"
 const DATABASE_PAGE = "/database"
 const INGREDIENTS_PAGE = "/ingredients"
+const MESSAGES_PAGE = "/messages"
 
 const ADMIN_ROLE = "admin"
 const USER_ROLE = "user"
@@ -154,6 +156,14 @@ app.get(DATABASE_PAGE, (request, response) => {
 
 app.all(INGREDIENTS_PAGE, (request, response) => {
     crudIngredients(request, response);
+});
+
+app.get(MESSAGES_PAGE, (request, response) => {
+    console.log("messages requested");
+    messagesIntegration(request, response, (html) => {
+        response.write(html);
+        response.end();
+    });
 });
 
 // loading css, js, bitmaps and other resources for the page
