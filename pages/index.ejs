@@ -46,14 +46,14 @@
           <li><a href="#ingredients">Hozzávalók (CRUD)</a></li>
           <li><a href="#contact">Kapcsolat</a></li>
           <% if (isLogedIn) { %>
-          <li><a href="#messages">Üzenetek</a></li>
-          <li><a href="/logout">Kilépés</a></li>
-          <% } else { %>
-          <li><a href="/login">Belépés</a></li>
-          <% } %>
-          <% if (userRole == "admin") { %>
-          <li><a href="/admin">Admin</a></li>
-          <% } %>
+            <li><a href="#messages">Üzenetek</a></li>
+            <li><a href="/logout">Kilépés</a></li>
+            <% } else { %>
+              <li><a href="/login">Belépés</a></li>
+              <% } %>
+                <% if (userRole=="admin" ) { %>
+                  <li><a href="/admin">Admin</a></li>
+                  <% } %>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -197,9 +197,34 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <!-- Contact Form -->
-        <form>
-          <h1>Kapcsolat Űrlap</h1>
-        </form>
+        <div class="container m-5">
+
+          <form id="messageComposerForm" class="needs-validation" action="?event=new_message" method="POST" novalidate>
+            <div class="form-group">
+              <input type="text" class="form-control" id="email" name="email" placeholder="Email cím">
+              <div class="invalid-feedback">
+                Kérlek adj meg egy érvényes email címet!
+              </div>
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control my-1" id="subject" name="subject" placeholder="Tárgy">
+              <div class="invalid-feedback">
+                Kérlek add meg a tárgyat!
+              </div>
+            </div>
+
+            <div class="form-group">
+              <textarea class="form-control" id="body" name="body" placeholder="Üzenet..." rows="12"></textarea>
+              <div class="invalid-feedback">
+                Kérlek írj egy rövid üzenetet!
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-dark mt-2" name="send" value="1">Küldés</button>
+          </form>
+        </div>
+
         <!-- /Contact Form -->
 
         <!-- Google Maps -->
@@ -216,13 +241,13 @@
     <!-- /Kontakt -->
 
     <% if (isLogedIn) { %>
-    <!-- Üzenetek -->
-    <section id="messages" class="messages section dark-background">
-      <h1>Üzenetek</h1>
-    </section>
-    <!-- /Üzenetek -->
-    <% } %>
-    
+      <!-- Üzenetek -->
+      <section id="messages" class="messages section dark-background">
+        <h1>Üzenetek</h1>
+      </section>
+      <!-- /Üzenetek -->
+      <% } %>
+
   </main>
 
   <footer id="footer" class="footer dark-background">
