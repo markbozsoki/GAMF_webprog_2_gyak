@@ -1,13 +1,13 @@
 import mysql from "mysql2";
 
 const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root", //studb150
-    password: "", //undecided
-    database: "recipe_database"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME, 
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
-con.ping(function (err) {
+connection.ping(function (err) {
     if (err) {
         console.error(`Cannot connect to: ${databaseName}`);
         callback(`<tr><td colspan='2'>Nem sikerült kapcsolódni az adatbázishoz.</td></tr>`);

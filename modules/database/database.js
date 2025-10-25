@@ -2,10 +2,10 @@ import mysql from "mysql2";
 
 export function getRecipes(databaseName, callback) {
     var con = mysql.createConnection({
-        host: "localhost",
-        user: "root", //studb150 
-        password: "", //undecided
-        database: "recipe_database"
+        host: process.env.DB_HOST,
+        user: process.env.DB_USERNAME, 
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE
     });
 
     con.ping(function (err) {

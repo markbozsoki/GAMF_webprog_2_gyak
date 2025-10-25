@@ -40,13 +40,12 @@
       </a>
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="/">Főoldal<br></a></li>
+          <li><a href="/#homepage">Főoldal<br></a></li>
           <li><a href="/#database">Receptbázis</a></li>
           <li><a href="/#messages">Üzenetek</a></li>
           <li><a href="/#ingredients">Hozzávalók (CRUD)</a></li>
           <li><a href="/#contact">Kapcsolat</a></li>
           <li><a href="/login">Belépés</a></li>
-          <li><a href="/admin">Admin</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -58,12 +57,30 @@
 
     <section id="homepage" class="section light-background">
 
-      <div id="about" class="about section">
-
-        <div class="container section-title" data-aos="fade-up">
-          <p><span>Login page</span></p>
+      <div class="d-flex align-content-stretch flex-wrap align-items-top justify-content-center">
+        <div class="mx-5 my-2 align-items-center justify-content-center">
+          <form id="loginForm" action="?method=login" method="POST">
+            <fieldset>
+              <legend>Bejlentkezés</legend>
+              <input class="p-1 m-1" type="text" name="username" placeholder="felhasználónév" autocomplete="on"><br>
+              <input class="p-1 m-1" type="password" name="current-password" placeholder="jelszó" autocomplete="on"><br>
+              <input class="m-1" type="submit" name="login" value="Belépés">
+            </fieldset>
+          </form>
         </div>
 
+        <div class="mx-5 my-2 align-items-center justify-content-center">
+          <form id="registrationForm" action="?method=register" method="POST">
+            <fieldset>
+              <legend>Regisztráció</legend>
+              <input class="p-1 m-1" type="text" name="surname" placeholder="vezetéknév"><br>
+              <input class="p-1 m-1" type="text" name="forename" placeholder="utónév"><br>
+              <input class="p-1 m-1" type="text" name="username" placeholder="felhasználónév" autocomplete="on"><br>
+              <input class="p-1 m-1" type="password" name="new-password" placeholder="jelszó" autocomplete="on"><br>
+              <input class="m-1" type="submit" name="register" value="Regisztráció">
+            </fieldset>
+          </form>
+        </div>
       </div>
 
     </section>

@@ -7,5 +7,8 @@ uninstall:
 test:
 	npm run test
 
+lint:
+	ejslint .\pages\
+
 server:
-	node indito.js
+	node --env-file=.env indito.js
