@@ -16,8 +16,18 @@ export const handleNewMessage = function handleNewMessage(request_body) {
         }
     });
 
+    var timestamp = Date.now();
+    var sender_email_address = request_body.email;
+    var subject = request_body.subject;
+    var message_body = request_body.body;
+    if (sender_email_address == "" || subject == "" || message_body == "") {
+        console.error("Some of the required field are empty")
+        console.log(`${timestamp} + ${sender_email_address} + ${subject} + ${message_body}`);
+        return false;
+    }
+
     
 
-    console.log('message is handling success')
+    console.log('message is handling success');
     return true;
 };
