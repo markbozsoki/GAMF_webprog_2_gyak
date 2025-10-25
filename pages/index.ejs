@@ -43,10 +43,10 @@
         <ul>
           <li><a href="#homepage">Főoldal<br></a></li>
           <li><a href="#database">Receptbázis</a></li>
-          <li><a href="#messages">Üzenetek</a></li>
           <li><a href="#ingredients">Hozzávalók (CRUD)</a></li>
           <li><a href="#contact">Kapcsolat</a></li>
           <% if (isLogedIn) { %>
+          <li><a href="#messages">Üzenetek</a></li>
           <li><a href="/logout">Kilépés</a></li>
           <% } else { %>
           <li><a href="/login">Belépés</a></li>
@@ -154,12 +154,6 @@
     </section>
     <!-- /Adatbázis -->
 
-    <!-- Üzenetek -->
-    <section id="messages" class="messages section dark-background">
-      <h1>Üzenetek</h1>
-    </section>
-    <!-- /Üzenetek -->
-
     <!-- Hozzávalók -->
     <section id="ingredients" class="ingredients section light-background">
       <h1>Hozzávalók</h1>
@@ -219,8 +213,16 @@
       </div>
 
     </section>
-    <!-- /Contact Section -->
+    <!-- /Kontakt -->
 
+    <% if (isLogedIn) { %>
+    <!-- Üzenetek -->
+    <section id="messages" class="messages section dark-background">
+      <h1>Üzenetek</h1>
+    </section>
+    <!-- /Üzenetek -->
+    <% } %>
+    
   </main>
 
   <footer id="footer" class="footer dark-background">
