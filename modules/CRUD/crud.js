@@ -9,8 +9,7 @@ const connection = mysql.createConnection({
 
 connection.ping(function (err) {
     if (err) {
-        console.error(`Cannot connect to: ${databaseName}`);
-        callback(`<tr><td colspan='2'>Nem sikerült kapcsolódni az adatbázishoz.</td></tr>`);
+        console.error(`Cannot connect to: ${process.env.DB_DATABASE}`);
         return;
     }
 });
