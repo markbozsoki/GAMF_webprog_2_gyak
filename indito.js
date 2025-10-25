@@ -14,6 +14,7 @@ const MySQLStore = mysqlSession(session);
 import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
 import { getRecipes } from './modules/database/database.js';
 import { crudIngredients } from "./modules/CRUD/crud.js";
+import { handleNewMessage } from "./modules/contact/contact.js";
 
 const app = exp();
 
@@ -219,7 +220,21 @@ function login(request, response) {
     }
 }
 
-
+app.post('/', (request, response) => {
+    var event = request.query.event
+    if (event === "new_message") {
+        var data = request.body;
+        console.log(`new message event recieved with ${JSON.stringify(data)}`);
+        if (handleNewMessage(data)) {
+            response.send(`<script>alert("Sikeres üzenetküldés!"); window.location.href = "${HOME_PAGE}"; </script>`);
+        } else {
+            response.send(`<script>alert("Nem sikerült elküldeni az üzenetet!"); window.location.href = "/#messageComposerForm"; </script>`);
+        }
+    }
+    else {
+        response.render("403");
+    }
+});
 
 app.listen(PORT, function () {
     console.log(`Server started at port: ${PORT} -> http://localhost:${PORT}`);
