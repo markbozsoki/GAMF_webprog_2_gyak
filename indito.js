@@ -226,9 +226,9 @@ app.post('/', (request, response) => {
         var data = request.body;
         console.log(`new message event recieved with ${JSON.stringify(data)}`);
         if (handleNewMessage(data)) {
-            response.send(`<script>alert("Sikeres üzenetküldés!"); window.location.href = "${HOME_PAGE}"; </script>`);
+            response.redirect(HOME_PAGE);
         } else {
-            response.send(`<script>alert("Nem sikerült elküldeni az üzenetet!"); window.location.href = "/#messageComposerForm"; </script>`);
+            response.send(`<script>alert("Nem sikerült elküldeni az üzenetet!"); window.location.href = "/#contact"; </script>`);
         }
     }
     else {
