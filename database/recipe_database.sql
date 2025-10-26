@@ -10,6 +10,19 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `recipe_database` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci;
 USE `recipe_database`;
 
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(3) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `passwordHash` varchar(512) DEFAULT NULL,
+  `role` int(1) DEFAULT 1, /* 1 - user; 2 - admin;*/
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--INSERT INTO `users` (`firstname`, `lastname`, `username`, `passwordHash`, `role`) VALUES
+--('Firstname', 'Lastname', 'admin', '', 2);
+ 
 CREATE TABLE IF NOT EXISTS `messages` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
   `timestamp` int(1) DEFAULT NULL,
