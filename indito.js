@@ -6,12 +6,18 @@ import mysqlSession from 'express-mysql-session';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import bodyParser from 'body-parser';
-import crypto from 'crypto';
 
 const LocalStrategy = passportLocal.Strategy;
 const MySQLStore = mysqlSession(session);
 
-import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
+import {
+    ADMIN_ROLE,
+    USER_ROLE,
+    requireAdminRole,
+    verifyCallback,
+    registerNewUser,
+    userExists
+} from './modules/authentication/authentication.js';
 import { getRecipes } from './modules/database/database.js';
 import { crudIngredients } from "./modules/CRUD/crud.js";
 import { handleNewMessage } from "./modules/contact/contact.js";
@@ -51,37 +57,9 @@ app.set("views", "pages")
 app.set("view engine", "ejs");
 
 const customFields = {
-    usernameField: 'uname',
-    passwordField: 'pw',
+    usernameField: 'username',
+    passwordField: 'password',
 };
-
-const verifyCallback = (username, password, done) => {
-    var con = mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_DATABASE
-    });
-
-    con.ping(function (err) {
-        if (err) {
-            console.error(`Cannot connect to: ${databaseName} for user authentication`);
-            return false;
-        }
-    });
-    con.query('SELECT * FROM users WHERE username = ? ', [username], function (error, results, fields) {
-        if (error)
-            return done(error);
-        if (results.length == 0)
-            return done(null, false);
-        const isValid = validPassword(password, results[0].hash);
-        user = { id: results[0].id, username: results[0].username, hash: results[0].hash };
-        if (isValid)
-            return done(null, user);
-        else
-            return done(null, false);
-    });
-}
 
 const strategy = new LocalStrategy(customFields, verifyCallback);
 passport.use(strategy);
@@ -101,19 +79,14 @@ const DATABASE_PAGE = "/database"
 const INGREDIENTS_PAGE = "/ingredients"
 const MESSAGES_PAGE = "/messages"
 
-const ADMIN_ROLE = "admin"
-const USER_ROLE = "user"
-
 app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
-
     const template_data = {
         userRole: request.session.userRole,
         isLogedIn: request.session.userId
     }
     response.render('index', template_data);
-
 }
 
 app.get(LOGIN_PAGE, (request, response) => {
@@ -132,16 +105,6 @@ app.get(LOGOUT_PAGE, (request, response) => {
         response.redirect(HOME_PAGE);
     });
 });
-
-const requireAdminRole = (request, response, next) => {
-    if (request.session.userRole == ADMIN_ROLE) {
-
-        next();
-    } else {
-        console.log(`Access denied to: ${request.path}, login required`);
-        response.render("403")
-    }
-}
 
 app.get(ADMIN_PAGE, requireAdminRole, (request, response) => {
     response.render("admin");
@@ -214,13 +177,13 @@ function register(request, response) {
         response.send(`<script>alert("Sikeres regisztráció!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
     } else {
         response.send(`<script>alert("Regisztráció sikertelen!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
-    }
+    } 
 }
 
 function login(request, response) {
     var data = request.body;
     console.log(`logging in initiated with ${JSON.stringify(data)}`);
-    if (validateUserForLogin(data)) {
+    if (userExists(data)) {
         request.session.userId = "mockUserId";
         request.session.userRole = USER_ROLE;
         //request.session.userRole = ADMIN_ROLE;
