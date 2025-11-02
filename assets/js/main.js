@@ -6,7 +6,7 @@
 * License: https://bootstrapmade.com/license/
 */
 
-(function() {
+(function () {
   "use strict";
 
   /**
@@ -50,7 +50,7 @@
    * Toggle mobile nav dropdowns
    */
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
+    navmenu.addEventListener('click', function (e) {
       e.preventDefault();
       this.parentNode.classList.toggle('active');
       this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
@@ -103,40 +103,9 @@
   window.addEventListener('load', aosInit);
 
   /**
-   * Initiate glightbox
-   */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
-
-  /**
-   * Initiate Pure Counter
-   */
-  new PureCounter();
-
-  /**
-   * Init swiper sliders
-   */
-  function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
-      let config = JSON.parse(
-        swiperElement.querySelector(".swiper-config").innerHTML.trim()
-      );
-
-      if (swiperElement.classList.contains("swiper-tab")) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
-      }
-    });
-  }
-
-  window.addEventListener("load", initSwiper);
-
-  /**
    * Correct scrolling position upon page load for URLs containing hash links.
    */
-  window.addEventListener('load', function(e) {
+  window.addEventListener('load', function (e) {
     if (window.location.hash) {
       if (document.querySelector(window.location.hash)) {
         setTimeout(() => {
@@ -157,19 +126,34 @@
   let navmenulinks = document.querySelectorAll('.navmenu a');
 
   function navmenuScrollspy() {
+    const currentPath = window.location.pathname;
+
     navmenulinks.forEach(navmenulink => {
-      if (!navmenulink.hash) return;
-      let section = document.querySelector(navmenulink.hash);
-      if (!section) return;
-      let position = window.scrollY + 200;
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
+      const href = navmenulink.getAttribute('href');
+      navmenulink.classList.remove('active');
+
+      if (href === currentPath) {
         navmenulink.classList.add('active');
-      } else {
-        navmenulink.classList.remove('active');
+        return;
       }
-    })
+
+      if (currentPath === '/' && navmenulink.hash) {
+        let section = document.querySelector(navmenulink.hash);
+        if (!section) return;
+        let position = window.scrollY + 200;
+
+        if (
+          position >= section.offsetTop &&
+          position <= (section.offsetTop + section.offsetHeight)
+        ) {
+          document.querySelectorAll('.navmenu a.active')
+            .forEach(link => link.classList.remove('active'));
+          navmenulink.classList.add('active');
+        }
+      }
+    });
   }
+
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
 
