@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import exp from 'express';
 import session from 'express-session';
@@ -6,18 +5,36 @@ import mysqlSession from 'express-mysql-session';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import bodyParser from 'body-parser';
-import crypto from 'crypto';
+import mysql from "mysql2";
 
 const LocalStrategy = passportLocal.Strategy;
 const MySQLStore = mysqlSession(session);
 
-import { registerNewUser, validateUserForLogin } from './modules/authentication/authentication.js';
+import {
+    registerNewUser,
+    validateUserForLogin,
+    userRoleIsAdmin,
+    passwordIsValid,
+} from './modules/authentication/authentication.js';
 import { getRecipes } from './modules/database/database.js';
 import { crudIngredients } from "./modules/CRUD/crud.js";
 import { handleNewMessage } from "./modules/contact/contact.js";
 import { messagesIntegration } from "./modules/messages/messages.js";
 
 const app = exp();
+
+var connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+});
+connection.connect((err) => {
+    if (!err)
+        console.log(`Connected to database: ${process.env.DB_DATABASE}`);
+    else
+        console.log(`Connection failed to database: ${process.env.DB_DATABASE}`);
+});
 
 const SESSION_NAME = "SessionCookie"
 app.use( // session middleware
@@ -91,6 +108,13 @@ passport.serializeUser((user, done) => {
     done(null, user.id)
 });
 
+passport.deserializeUser(function (username, done) {
+    console.log('deserializeUser' + username);
+    connection.query('SELECT * FROM users where username = ?', [username], function (error, results) {
+        done(null, results[0]);
+    });
+});
+
 var PORT = process.env.APP_PORT || 8080;
 
 const HOME_PAGE = "/#homepage"
@@ -107,13 +131,11 @@ const USER_ROLE = "user"
 app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
-
-    const template_data = {
+    var template_data = {
         userRole: request.session.userRole,
         isLogedIn: request.session.userId
     }
     response.render('index', template_data);
-
 }
 
 app.get(LOGIN_PAGE, (request, response) => {
@@ -131,6 +153,7 @@ app.get(LOGOUT_PAGE, (request, response) => {
         response.clearCookie(SESSION_NAME);
         response.redirect(HOME_PAGE);
     });
+    console.log("Logged out");
 });
 
 const requireAdminRole = (request, response, next) => {
@@ -195,8 +218,8 @@ app.get(/.*/, (request, response) => {
 app.post(LOGIN_PAGE, (request, response) => {
     var requested_method = request.query.method
     if (requested_method === "login") {
-        login(request, response);
-        response.redirect(HOME_PAGE);
+        validateUserForLogin(response, request, loginIfValidUser)
+        return
     }
     else if (requested_method === "register") {
         register(request, response);
@@ -204,6 +227,7 @@ app.post(LOGIN_PAGE, (request, response) => {
     }
     else {
         response.render("403");
+        return
     }
 });
 
@@ -212,21 +236,47 @@ function register(request, response) {
     console.log(`registration initiated with ${JSON.stringify(data)}`);
     if (registerNewUser(data)) {
         response.send(`<script>alert("Sikeres regisztráció!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
+        return
     } else {
         response.send(`<script>alert("Regisztráció sikertelen!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
+        return
     }
 }
 
-function login(request, response) {
-    var data = request.body;
-    console.log(`logging in initiated with ${JSON.stringify(data)}`);
-    if (validateUserForLogin(data)) {
-        request.session.userId = "mockUserId";
-        request.session.userRole = USER_ROLE;
-        //request.session.userRole = ADMIN_ROLE;
+function loginIfValidUser(response, request, user_is_valid) {
+    console.log(`logging in initiated with ${JSON.stringify(request.body)}`);
+    console.log(`validate: ${user_is_valid}`)
+    if (user_is_valid) {
+        passwordIsValid(response, request, loginIfPasswordIsValid);
+        return
     } else {
         response.send(`<script>alert("Helytelen felhasználónév vagy jelszó!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
+        return
+
     }
+    return
+}
+
+function loginIfPasswordIsValid(response, request, password_is_valid) {
+    if (password_is_valid) {
+        userRoleIsAdmin(response, request, loginIfUserIsAdmin)
+    } else {
+        response.send(`<script>alert("Hibás jelszó"); window.location.href = "${LOGIN_PAGE}"; </script>`);
+        return
+    }
+}
+
+function loginIfUserIsAdmin(response, request, user_is_admin) {
+    if (user_is_admin) {
+        console.log("Admin view enabled");
+        request.session.userRole = ADMIN_ROLE;
+    } else {
+        request.session.userRole = USER_ROLE;
+    }
+    request.session.userId = request.body.username;
+    console.log("Logged in");
+    response.redirect(HOME_PAGE);
+    return
 }
 
 app.post('/', (request, response) => {

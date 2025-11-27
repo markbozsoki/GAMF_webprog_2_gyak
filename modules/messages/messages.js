@@ -25,7 +25,7 @@ export function messagesIntegration(request, response, callback) {
 
             var html = ``;
             result.forEach(row => {
-                console.log(JSON.stringify(row))
+                //console.log(JSON.stringify(row))
                 var datetime_string = `${new Date(row.timestamp * 1000)}`.substring(4,34)
                 html += `<tr>
                             <td>${datetime_string}</td>
