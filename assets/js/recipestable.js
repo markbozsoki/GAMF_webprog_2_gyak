@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
         alphabetDiv.appendChild(btn);
     });
 
-    fetch("/database")
+    var basePath = document.getElementById("base_path").innerHTML
+        fetch(`/${basePath}/database`)
         .then(function (res) { return res.text(); })
         .then(function (html) {
 

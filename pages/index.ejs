@@ -30,11 +30,12 @@
 </head>
 
 <body class="index-page">
+  <div id="base_path" style="display:none;"><%= basePath %></div>
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
-      <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
+      <a href="" class="logo d-flex align-items-center me-auto me-xl-0">
         <h1 class="sitename">Nyami Főzőiskola</h1>
         <span>.</span>
       </a>
@@ -47,12 +48,12 @@
           <li><a href="#contact">Kapcsolat</a></li>
           <% if (isLogedIn) { %>
             <li><a href="#messages">Üzenetek</a></li>
-            <li><a href="/logout">Kilépés</a></li>
+            <li><a href="./logout">Kilépés</a></li>
             <% } else { %>
-              <li><a href="/login">Belépés</a></li>
+              <li><a href="./login">Belépés</a></li>
               <% } %>
                   <% if (userRole=="admin" ) { %>
-                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="./admin">Admin</a></li>
                     <% } %>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -95,7 +96,7 @@
           <div class="row gy-4">
 
             <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
-              <img src="./assets/img/about.jpg" class="img-fluid mb-4" alt="">
+              <img src=<% basePath %>"./assets/img/about.jpg" class="img-fluid mb-4" alt="">
 
               <div class="book-a-table">
                 <h3>Jelentkezz főzőiskolánkba!</h3>

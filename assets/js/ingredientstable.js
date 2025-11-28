@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var allIngredients = [];
 
     function fetchIngredients() {
-        fetch("/ingredients")
+        var basePath = document.getElementById("base_path").innerHTML
+        fetch(`/${basePath}/ingredients`)
             .then(function (res) { return res.json(); })
             .then(function (ingredients) {
                 allIngredients = ingredients;
