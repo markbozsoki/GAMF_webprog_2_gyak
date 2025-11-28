@@ -19,7 +19,7 @@ export const validateUserForLogin = function validateUserForLogin(response, requ
 
     connection.query('Select * from users where username=? ', [request.body.username], function (error, results, fields) {
         if (error){
-            console.log("Error");
+            console.log("Error, user not found");
             return
         }
         else if (results.length != 1){
