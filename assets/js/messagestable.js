@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var tbody = document.getElementById("messages-table-body");
     var rows = [];
 
-    fetch("/messages")
+    var basePath = document.getElementById("base_path").innerHTML
+        fetch(`/${basePath}/messages`)
         .then(function (response) {
             return response.text();
         })
