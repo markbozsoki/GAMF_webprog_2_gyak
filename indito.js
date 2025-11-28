@@ -230,8 +230,7 @@ app.post(LOGIN_PAGE, (request, response) => {
         return
     }
     else if (requested_method === "register") {
-        register(request, response);
-        response.redirect(LOGIN_PAGE);
+        register(request, response);        
     }
     else {
         response.render("403");
