@@ -115,25 +115,30 @@ passport.deserializeUser(function (username, done) {
     });
 });
 
+var HOST = process.env.HOST || "localhost";
+var BASE_PATH = process.env.BASE_PATH || "application";
 var PORT = process.env.APP_PORT || 8080;
 
-const HOME_PAGE = "/#homepage"
-const LOGIN_PAGE = "/login"
-const LOGOUT_PAGE = "/logout"
-const ADMIN_PAGE = "/admin"
-const DATABASE_PAGE = "/database"
-const INGREDIENTS_PAGE = "/ingredients"
-const MESSAGES_PAGE = "/messages"
+
+const HOME_PAGE = `${BASE_PATH}/#homepage`
+const LOGIN_PAGE = `${BASE_PATH}/login`
+const LOGOUT_PAGE = `${BASE_PATH}/logout`
+const ADMIN_PAGE = `${BASE_PATH}/admin`
+const DATABASE_PAGE = `${BASE_PATH}/database`
+const INGREDIENTS_PAGE = `${BASE_PATH}/ingredients`
+const MESSAGES_PAGE = `${BASE_PATH}/messages`
 
 const ADMIN_ROLE = "admin"
 const USER_ROLE = "user"
 
+app.get(BASE_PATH, (request, response) => loadMainPage(request, response));
 app.get('', (request, response) => loadMainPage(request, response));
 app.get('/', (request, response) => loadMainPage(request, response));
 function loadMainPage(request, response) {
     var template_data = {
         userRole: request.session.userRole,
-        isLogedIn: request.session.userId
+        isLogedIn: request.session.userId,
+        basePath: BASE_PATH
     }
     response.render('index', template_data);
 }
@@ -279,7 +284,7 @@ function loginIfUserIsAdmin(response, request, user_is_admin) {
     return
 }
 
-app.post('/', (request, response) => {
+app.post(`${BASE_PATH}/`, (request, response) => {
     var event = request.query.event
     if (event === "new_message") {
         var data = request.body;
@@ -296,5 +301,5 @@ app.post('/', (request, response) => {
 });
 
 app.listen(PORT, function () {
-    console.log(`Server started at port: ${PORT} -> http://localhost:${PORT}`);
+    console.log(`Server started at port: ${PORT} -> http://${HOST}/${BASE_PATH}:${PORT}`);
 });

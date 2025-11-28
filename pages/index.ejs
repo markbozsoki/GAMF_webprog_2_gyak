@@ -9,8 +9,8 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="./assets/img/favicon.png" rel="icon">
-  <link href="./assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="<%= basePath %>/assets/img/favicon.png" rel="icon">
+  <link href="<%= basePath %>/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -20,12 +20,12 @@
     rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="./assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="./assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="./assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="<%= basePath %>/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="<%= basePath %>/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="<%= basePath %>/assets/vendor/aos/aos.css" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="./assets/css/main.css" rel="stylesheet">
+  <link href="<%= basePath %>/assets/css/main.css" rel="stylesheet">
 
 </head>
 
@@ -34,25 +34,25 @@
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
-      <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
+      <a href="<%= basePath %>/" class="logo d-flex align-items-center me-auto me-xl-0">
         <h1 class="sitename">Nyami Főzőiskola</h1>
         <span>.</span>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#homepage" class="active">Főoldal<br></a></li>
-          <li><a href="#database">Receptbázis</a></li>
-          <li><a href="#ingredients">Hozzávalók (CRUD)</a></li>
-          <li><a href="#contact">Kapcsolat</a></li>
+          <li><a href="<%= basePath %>/#homepage" class="active">Főoldal<br></a></li>
+          <li><a href="<%= basePath %>/#database">Receptbázis</a></li>
+          <li><a href="<%= basePath %>/#ingredients">Hozzávalók (CRUD)</a></li>
+          <li><a href="<%= basePath %>/#contact">Kapcsolat</a></li>
           <% if (isLogedIn) { %>
-            <li><a href="#messages">Üzenetek</a></li>
-            <li><a href="/logout">Kilépés</a></li>
+            <li><a href="<%= basePath %>/#messages">Üzenetek</a></li>
+            <li><a href="<%= basePath %>/logout">Kilépés</a></li>
             <% } else { %>
-              <li><a href="/login">Belépés</a></li>
+              <li><a href="<%= basePath %>/login">Belépés</a></li>
               <% } %>
                   <% if (userRole=="admin" ) { %>
-                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="<%= basePath %>/admin">Admin</a></li>
                     <% } %>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -95,7 +95,7 @@
           <div class="row gy-4">
 
             <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
-              <img src="./assets/img/about.jpg" class="img-fluid mb-4" alt="">
+              <img src=<% basePath %>"/assets/img/about.jpg" class="img-fluid mb-4" alt="">
 
               <div class="book-a-table">
                 <h3>Jelentkezz főzőiskolánkba!</h3>
@@ -281,15 +281,15 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
-  <script src="./assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="./assets/vendor/aos/aos.js"></script>
+  <script src="<%= basePath %>/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="<%= basePath %>/assets/vendor/aos/aos.js"></script>
 
   <!-- Main JS File -->
-  <script src="./assets/js/main.js"></script>
+  <script src="<%= basePath %>/assets/js/main.js"></script>
 
-  <script src="./assets/js/recipestable.js"></script>
-  <script src="./assets/js/ingredientstable.js"></script>
-  <script src="./assets/js/messagestable.js"></script>
+  <script src="<%= basePath %>/assets/js/recipestable.js"></script>
+  <script src="<%= basePath %>/assets/js/ingredientstable.js"></script>
+  <script src="<%= basePath %>/assets/js/messagestable.js"></script>
 
 </body>
 
