@@ -230,6 +230,7 @@ app.post(LOGIN_PAGE, (request, response) => {
         return
     }
     else if (requested_method === "register") {
+        registerNewUser(request, response, register);
         register(request, response);        
     }
     else {
@@ -238,14 +239,14 @@ app.post(LOGIN_PAGE, (request, response) => {
     }
 });
 
-function register(request, response) {
+function register(request, response, result) {
     var data = request.body;
     console.log(`registration initiated with ${JSON.stringify(data)}`);
-    if (registerNewUser(data)) {
+    if (result) {
         response.send(`<script>alert("Sikeres regisztráció!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
         return
     } else {
-        response.send(`<script>alert("Regisztráció sikertelen!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
+        //response.send(`<script>alert("Regisztráció sikertelen!"); window.location.href = "${LOGIN_PAGE}"; </script>`);
         return
     }
 }

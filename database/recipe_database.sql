@@ -11,7 +11,7 @@ CREATE DATABASE IF NOT EXISTS `recipe_database` DEFAULT CHARACTER SET utf8mb4 CO
 USE `recipe_database`;
 
 CREATE TABLE `users` (
-  `id` int(3) NOT NULL,
+  `id` int(3) NOT NULL AUTO_INCREMENT,
   `firstname` varchar(50) DEFAULT NULL,
   `lastname` varchar(50) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,

@@ -18,11 +18,11 @@ export const validateUserForLogin = function validateUserForLogin(response, requ
     });
 
     connection.query('Select * from users where username=? ', [request.body.username], function (error, results, fields) {
-        if (error){
+        if (error) {
             console.log("Error, user not found");
             return
         }
-        else if (results.length != 1){
+        else if (results.length != 1) {
             console.log('validation fa{iled')
             callback(response, request, false);
         }
@@ -32,7 +32,7 @@ export const validateUserForLogin = function validateUserForLogin(response, requ
     callback(response, request, true);
 };
 
-export const registerNewUser = function registerNewUser(request_body) {
+export const registerNewUser = function registerNewUser(request, response, callback) {
     console.log('registering new user');
     var connection = mysql.createConnection({
         host: process.env.DB_HOST,
@@ -44,31 +44,39 @@ export const registerNewUser = function registerNewUser(request_body) {
     connection.ping(function (err) {
         if (err) {
             console.error(`Cannot connect to: ${databaseName} for user registration`);
-            return false;
+            callback(request, response, false);
         }
     });
 
-    connection.query('Select * from users where username=? ', [request_body.username], function (error, results, fields) {
-        if (error)
-            console.log("Error");
-        else if (results.length != 0)
+    connection.query('Select * from users where username=? ', [request.body.username], function (error, results, fields) {
+        if (error) {
+            console.log("Error during existing user check");
+            console.log(JSON.stringify(error))
+            callback(request, response, false);
+        }
+        else if (results.length != 0) {
             console.log('username already exists')
-        return false;
+            callback(request, response, false);
+        }
+        callback(request, response, false);
     });
 
-    const hash = genPassword(request_body.new_password);
+    const hash = genPassword(request.body.new_password);
     connection.query('Insert into users(firstname,lastname,username,passwordHash,role) values(?,?,?,?,1) ', [
-        request_body.surname, request_body.forename, request_body.username, hash
+        request.body.surname, request.body.forename, request.body.username, hash
 
     ], function (error, results, fields) {
-        if (error)
-            console.log("Error");
+        if (error) {
+            console.log("Error creating new user");
+            console.log(JSON.stringify(error))
+            callback(request, response, false);
+        }
         else
             console.log("Successfully Entered");
+        callback(request, response, true);
     });
 
     console.log('registration success')
-    return true;
 };
 
 export const genPassword = function genPassword(password) {
@@ -142,6 +150,6 @@ export const userRoleIsAdmin = function userRoleIsAdmin(response, request, callb
         }
         else
             callback(response, request, false);
-            return
+        return
     });
 }
