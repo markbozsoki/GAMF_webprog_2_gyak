@@ -287,7 +287,7 @@ function loginIfUserIsAdmin(response, request, user_is_admin) {
     return
 }
 
-app.post(`${BASE_PATH}/`, (request, response) => {
+app.post(`/${BASE_PATH}/`, (request, response) => {
     var event = request.query.event
     if (event === "new_message") {
         var data = request.body;
