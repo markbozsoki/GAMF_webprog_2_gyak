@@ -39,7 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!confirm("Biztosan hozzá szeretné adni ezt a hozzávalót?")) return;
 
-        fetch("/ingredients", {
+        var basePath = document.getElementById("base_path").innerHTML
+            fetch(`/${basePath}/ingredients`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ nev: nev })
@@ -59,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.target.classList.contains("delete-btn")) {
             if (!confirm("Biztosan törölni szeretnéd ezt a hozzávalót?")) return;
 
-            fetch("/ingredients?id=" + id, { method: "DELETE" })
+            var basePath = document.getElementById("base_path").innerHTML
+            fetch(`/${basePath}/ingredients?id=` + id, { method: "DELETE" })
                 .then(function () { fetchIngredients(); })
                 .catch(function (err) { console.error("Hiba a törlés közben:", err); });
 
@@ -84,7 +86,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var newName = input.value.trim();
             if (!newName) return;
 
-            fetch("/ingredients", {
+            var basePath = document.getElementById("base_path").innerHTML
+            fetch(`/${basePath}/ingredients`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: id, nev: newName })
